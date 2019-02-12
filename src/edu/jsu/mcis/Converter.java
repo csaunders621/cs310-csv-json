@@ -68,12 +68,31 @@ public class Converter {
             Iterator<String[]> iterator = full.iterator();
             
             // INSERT YOUR CODE HERE
+            while (iterator.hasNext()) {
+                String[] line = iterator.next();
+                full.add(line);
+            }
             
+            JSONArray records = new JSONArray(); 
+            LinkedHashMap<String, String> jsonObject = new LinkedHashMap<>();
+
+            String[] record;
+            String jsonString = "";
+            String[] headings;
+            headings = full.get(0);
+            
+            while (iterator.hasNext()) { 
+                record = iterator.next(); 
+                jsonObject = new LinkedHashMap<>();  
+                for (int i = 0; i < headings.length; ++i) { 
+                    jsonObject.put(headings[i], record[i]); 
+                }
+                records.add(jsonObject); 
+            } 
         }        
         catch(Exception e) { return e.toString(); }
         
-        return results.trim();
-        
+        return results.trim(); 
     }
     
     public static String jsonToCsv(String jsonString) {
@@ -86,6 +105,22 @@ public class Converter {
             CSVWriter csvWriter = new CSVWriter(writer, ',', '"', '\n');
             
             // INSERT YOUR CODE HERE
+            JSONParser parser = new JSONParser();
+            JSONObject jsonobject = (JSONObject)parser.parse(jsonString);
+            
+            String[] csvData;
+            for (int i = 0; i < jsonobject; ++i) {
+                
+            }
+            
+            //String[] csvData;
+            //csvData = json
+            
+            for(int i = 0; i < csvData.length; ++i) {
+                csvWriter.writeNext(jsonobject);
+            }
+            
+            String csvString = writer.toString();
             
         }
         
