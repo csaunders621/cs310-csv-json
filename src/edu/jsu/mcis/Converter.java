@@ -67,28 +67,45 @@ public class Converter {
             List<String[]> full = reader.readAll();
             Iterator<String[]> iterator = full.iterator();
             
-            // INSERT YOUR CODE HERE
+            // INSERT YOUR CODE HERE            
+            String[] headings = iterator.next();
+            JSONArray colheaders = new JSONArray();
+            
+            for (int i = 0; i < headings.length; i++) {
+                colheaders.add(headings[i]);
+            }
+
+
+            LinkedHashMap<String, JSONArray> jsonobject;
+            jsonobject = new LinkedHashMap<>();           
+            
+            String[] record;
+            JSONArray rowheaders = new JSONArray();
+            ArrayList<Integer> indivData; 
+            JSONArray data = new JSONArray();
+            JSONArray records = new JSONArray();
+            String jsonString = "";
+            
             while (iterator.hasNext()) {
-                String[] line = iterator.next();
-                full.add(line);
+                record = iterator.next();
+                rowheaders.add(record[0]);
+                indivData = new ArrayList<>();
+                
+                for (int i = 1; i < record.length; i++) {
+                    indivData.add(Integer.parseInt(record[i]));
+                }
+                
+                data.add(indivData);
             }
             
-            JSONArray records = new JSONArray(); 
-            LinkedHashMap<String, String> jsonObject = new LinkedHashMap<>();
-
-            String[] record;
-            String jsonString = "";
-            String[] headings;
-            headings = full.get(0);
+            jsonobject.put("rowHeaders", rowheaders);            
+            jsonobject.put("data", data);
+            jsonobject.put("colHeaders", colheaders);
             
-            while (iterator.hasNext()) { 
-                record = iterator.next(); 
-                jsonObject = new LinkedHashMap<>();  
-                for (int i = 0; i < headings.length; ++i) { 
-                    jsonObject.put(headings[i], record[i]); 
-                }
-                records.add(jsonObject); 
-            } 
+            records.add(jsonobject);
+            
+            jsonString = JSONValue.toJSONString(records);
+            results = jsonString;
         }        
         catch(Exception e) { return e.toString(); }
         
@@ -108,20 +125,16 @@ public class Converter {
             JSONParser parser = new JSONParser();
             JSONObject jsonobject = (JSONObject)parser.parse(jsonString);
             
-            String[] csvData;
-            for (int i = 0; i < jsonobject; ++i) {
-                
-            }
-            
-            //String[] csvData;
-            //csvData = json
-            
-            for(int i = 0; i < csvData.length; ++i) {
-                csvWriter.writeNext(jsonobject);
-            }
+            String[] csvData = new String[8];                        
+              
+            csvData[0] = jsonobject.get("colHeaders").toString();
+            csvData[1] = jsonobject.get("rowHeaders").toString();
+            csvData[2] = jsonobject.get("data").toString();
+                        
+            csvWriter.writeNext(csvData);
             
             String csvString = writer.toString();
-            
+            results = csvString;            
         }
         
         catch(Exception e) { return e.toString(); }
